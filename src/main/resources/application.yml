@@ -1,0 +1,8 @@
+custom:
+  url: http://www.bing.com
+  regex: http://(.*?)\.jpg
+
+qiniu:
+  accessKey:
+  secretKey:
+  bucketName:
