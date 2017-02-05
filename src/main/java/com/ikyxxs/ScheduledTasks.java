@@ -20,11 +20,9 @@ import java.util.regex.Pattern;
 @Component
 public class ScheduledTasks {
 
-    @Value("${custom.url}")
-    private String url;
+    private static final String url = "http://www.bing.com";
 
-    @Value("${custom.regex}")
-    private String regex;
+    private static String regex = "(?<=url:\\s)\"/(.*)\\.jpg\"";
 
     @Scheduled(cron = "0 0 9 * * ?")        //每天9点执行
     public void reportCurrentTime() throws IOException {
@@ -37,7 +35,7 @@ public class ScheduledTasks {
 
         //通过正则表达式获取网页内的图片链接
         if (matcher.find()) {
-            String picUrl = matcher.group();
+            String picUrl = url + matcher.group().replaceAll("\"", "");
             String picName = FileUtils.getFileNameFromUrl(picUrl);
 
             if (!StringUtils.isEmpty(picName)) {
