@@ -1,6 +1,6 @@
 # BingPic
 
-每天定时获取[必应](http://www.bing.com)的背景图片并上传到七牛
+每天定时获取[必应](https://cn.bing.com)的背景图片并上传到七牛
 
 ## 作者
 
@@ -16,7 +16,7 @@
 3. 使用maven构建运行
 
 ```
-git clone https://github.com/zbq-best/BingPic.git
+git clone https://github.com/ikyxxs/BingPic.git
 cd BingPic
 vim src/main/resources/application.yml
 mvn clean install
