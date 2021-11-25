@@ -11,25 +11,28 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Created by mubai on 16/12/8.
+ * HTTP工具类
+ *
+ * @author mubai
+ * @date 2016/12/08
  */
 public class HttpUtils {
 
-    private static OkHttpClient client = new OkHttpClient();
+    private static final OkHttpClient CLIENT = new OkHttpClient();
 
     /**
      * 通过HTTP GET方式获取网页内容
      *
      * @param url 链接
      * @return 网页内容
-     * @throws IOException
+     * @throws IOException IO异常
      */
     public static String get(String url) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        Response response = client.newCall(request).execute();
+        Response response = CLIENT.newCall(request).execute();
         return response.body().string();
     }
 
@@ -40,12 +43,11 @@ public class HttpUtils {
      * @param picName 图片地址
      */
     public static void downloadPicture(String picUrl, String picName) {
-        URL url;
         DataInputStream dataInputStream = null;
         FileOutputStream fileOutputStream = null;
 
         try {
-            url = new URL(picUrl);
+            URL url = new URL(picUrl);
             dataInputStream = new DataInputStream(url.openStream());
 
             fileOutputStream = new FileOutputStream(new File(picName));

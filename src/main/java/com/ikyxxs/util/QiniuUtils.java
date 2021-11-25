@@ -7,14 +7,20 @@ import com.qiniu.http.Response;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
-import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-@Log4j
+/**
+ * 七牛工具类
+ *
+ * @author mubai
+ * @date 2016/12/08
+ */
 public class QiniuUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(QiniuUtils.class);
 
     //密钥配置
     private static Auth auth = Auth.create(Application.accessKey, Application.secretKey);

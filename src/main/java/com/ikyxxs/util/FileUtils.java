@@ -4,9 +4,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by mubai on 16/12/8.
+ * 文件工具类
+ *
+ * @author mubai
+ * @date 2016/12/08
  */
 public class FileUtils {
+
+    private static final Pattern FILE_NAME_PATTERN = Pattern.compile("[^/\\\\\\\\]+$");
 
     /**
      * 根据链接获取文件名
@@ -15,13 +20,7 @@ public class FileUtils {
      * @return 文件名
      */
     public static String getFileNameFromUrl(String url) {
-        Pattern pattern = Pattern.compile("[^/\\\\\\\\]+$");
-        Matcher matcher = pattern.matcher(url);
-
-        if (matcher.find()) {
-            return matcher.group();
-        }
-
-        return "";
+        Matcher matcher = FILE_NAME_PATTERN.matcher(url);
+        return matcher.find() ? matcher.group() : "";
     }
 }
