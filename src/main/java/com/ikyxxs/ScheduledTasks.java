@@ -33,40 +33,53 @@ public class ScheduledTasks {
     /**
      * 背景图正则表达式
      */
-    private static final Pattern IMG_PATTERN = Pattern.compile("/th\\?(.*?)\\.jpg");
+    private static final Pattern IMG_PATTERN = Pattern.compile("\"Wallpaper\":\"([^\"]*)");
 
     /**
      * 每天9点获取背景图链接并上传至七牛云
      */
     @Scheduled(cron = "0 0 9 * * ?")
     public void execute() throws IOException {
-
-        // 获取bing.com网页内容
-        String result = HttpUtils.get(BING_URL);
-
-        // 通过正则表达式获取网页内的图片链接
-        Matcher matcher = IMG_PATTERN.matcher(result);
-        while (matcher.find()) {
-            String picUrl = BING_URL + matcher.group();
-            if (picUrl.contains("_tmb.")) {
-                continue;
-            }
-            String picName = FileUtils.getFileNameFromUrl(picUrl);
-            if (!StringUtils.isEmpty(picName)) {
-                picName = picName.substring(picName.indexOf('=') + 1);
-                //下载图片到本地
-                HttpUtils.downloadPicture(picUrl, picName);
-
-                File file = new File(picName);
-                if (file.exists()) {
-                    //上传图片到七牛
-                    QiniuUtils.upload(file.getPath(), picName);
-                    log.info(picName);
-                    //删除本地的图片
-                    file.deleteOnExit();
-                }
-            }
-            break;
+        String picUrl = extractImgUrl();
+        if (StringUtils.isEmpty(picUrl)) {
+            return;
         }
+        String picName = FileUtils.getFileNameFromUrl(picUrl);
+        if (StringUtils.isEmpty(picName)) {
+            return;
+        }
+        picName = picName.substring(picName.indexOf('=') + 1);
+
+        //下载图片到本地
+        HttpUtils.downloadPicture(picUrl, picName);
+
+        File file = new File(picName);
+        if (file.exists()) {
+            //上传图片到七牛
+            QiniuUtils.upload(file.getPath(), picName);
+            log.info(picName);
+            //删除本地的图片
+            file.delete();
+        }
+    }
+
+    /**
+     * 提取图片链接
+     */
+    public String extractImgUrl() {
+        try {
+            String text = HttpUtils.get(BING_URL);
+            Matcher m = IMG_PATTERN.matcher(text);
+            if (m.find()) {
+                String wallpaperLink = m.group(1);
+                if (wallpaperLink.contains("jpg\\u")) {
+                    wallpaperLink = wallpaperLink.substring(0, wallpaperLink.indexOf("\\u"));
+                }
+                return BING_URL + wallpaperLink;
+            }
+        } catch (Exception e) {
+            log.error("提取图片链接异常", e);
+        }
+        return null;
     }
 }
